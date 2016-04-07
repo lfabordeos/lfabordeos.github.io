@@ -1,0 +1,11 @@
+.alert-left {
+	float: left;
+}
+
+.alert-right {
+	float: right;
+}
+
+.alert-clear {
+	clear: both;
+}

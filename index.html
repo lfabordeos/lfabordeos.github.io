@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+	<head>	
+		<title>
+			JS Alert Plugin Sample
+		</title>
+		<link rel="stylesheet" href="css/alert.css"/>
+	</head>
+	<body>
+		<div class="alert-content-src">
+			<img src="img/no.png"/>
+			<p>No no no no no!</p>
+		</div>
+		<button type="button" id="launchAlertButton">
+			Launch
+		</button>
+		<script type="text/javascript" src="js/alert.js"></script>
+		<script type="text/javascript">
+			var myPositiveMsg = "This is a very long positive message!";
+			var alert = new Alert({
+				positiveMessage: myPositiveMsg
+			});
+
+			var launcher = document.getElementById("launchAlertButton");
+			launcher.addEventListener('click',function(){
+				alert.open();
+			})
+		</script>
+	</body>
+</html>
