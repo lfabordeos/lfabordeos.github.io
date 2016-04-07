@@ -11,20 +11,28 @@
 			<img src="img/no.png"/>
 			<p>No no no no no!</p>
 		</div>
+		<button type="button" id="launchNormalAlert">
+			Launch Normal Alert
+		</button>
 		<button type="button" id="launchAlertButton">
-			Launch
+			Launch Custom Alert
 		</button>
 		<script type="text/javascript" src="js/alert.js"></script>
-		<script type="text/javascript">
+		<script>
 			var myPositiveMsg = "This is a very long positive message!";
-			var alert = new Alert({
+			var myCustomAlert = new Alert({
 				positiveMessage: myPositiveMsg
 			});
 
 			var launcher = document.getElementById("launchAlertButton");
 			launcher.addEventListener('click',function(){
-				alert.open();
+				myCustomAlert.open();
 			})
+
+			var normalLauncher = document.getElementById("launchNormalAlert");
+			normalLauncher.addEventListener('click', function(){
+				alert("Boring old alert message");
+			});
 		</script>
 	</body>
 </html>
