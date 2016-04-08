@@ -19,33 +19,32 @@
 		this.transitionEnd = transitionSelect();
 
 		var defaults = {
-			className: 'pop-out',
 			positiveMessage: "Ok",
-			closeButton: false,
 			maxWidth: 600,
 			minWidth: 250,
 			overlay: true,
 			shake: true,
 			sound: true,
-			soundFile: "audio/alert"
+			soundFile: "audio/alert",
+			content: null,
+			contentID: null
 		}
 
 		if(arguments[0] && typeof arguments[0] === "object") {
 			this.options = mergeOptions(defaults, arguments[0]);
 		}
 
-		//check alert-content-src element
-		var c = document.getElementsByClassName("alert-content-src");
-		if(c[0] !== null) {
-			if(typeof c[0] === "string") {
-				this.options.content = c[0];
-			} else if(typeof c[0] === "object") {
-				this.options.content = c[0].innerHTML;
+		if(this.options.content === null && this.options.contentID !== null && typeof this.options.contentID === "string") {
+			var c = document.getElementById(this.options.contentID);
+			if( c !== null) {
+				if(typeof c === "string") {
+					this.options.content = c;
+				} else {
+					this.options.content  = c.innerHTML;
+				}
 			} else {
-				console.log(typeof c[0]);
+				this.options.content = "An error occured!"; //default msg
 			}
-		} else {
-			this.options.content = "An error occured!";
 		}
 	}
 
@@ -107,12 +106,7 @@
 	function buildAlert() {
 		var content, documentFragment;
 
-		//check content type
-		if(typeof this.options.content === "string") {
-			content = this.options.content;
-		} else {
-			content = this.option.content.innerHTML;
-		}
+		content = this.options.content;
 
 		documentFragment = document.createDocumentFragment();
 
@@ -126,21 +120,12 @@
 		//build container
 		this.alert = document.createElement("div");
 		this.alert.className = "alert-container " + this.options.className;
-		console.log(window.innerWidth);
 		if(window.innerWidth < this.options.maxWidth) {
 			this.alert.style.maxWidth = (window.innerWidth - 40) + "px";
 		} else {
 			this.alert.style.maxWidth = this.options.maxWidth + "px";
 		}
 		this.alert.style.minWidth = this.options.minWidth + "px";
-
-		//add a close button if true
-		if(this.options.closeButton == true) {
-			this.closeButton = document.createElement("button");
-			this.closeButton.className = "alert-close alert-close-btn";
-			this.closeButton.innerHTML = "x";
-			this.alert.appendChild(this.closeButton);
-		}
 
 		//create content
 		this.contentHolder = document.createElement("div");
@@ -184,10 +169,6 @@
 	function bindEvents() {
 
 		this.positiveButton.addEventListener('click', this.close.bind(this));
-
-		if(this.closeButton) {
-			this.closeButton.addEventListener('click', this.close.bind(this));
-		}
 
 		if(this.overlay) {
 			//shake alert box

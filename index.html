@@ -5,33 +5,84 @@
 			JS Alert Plugin Sample
 		</title>
 		<link rel="stylesheet" href="css/alert.css"/>
+		<link rel="stylesheet" href="css/confirm.css"/>
 	</head>
 	<body>
-		<div class="alert-content-src">
-			<img src="img/no.png"/>
-			<p>No no no no no!</p>
+		<div class="container" id="alert-box-container">
+			<div id="alert-content-src1" class="alert-content-src">
+				<img src="img/no.png"/>
+				<p>No no no no no!</p>
+			</div>
+			<div id="alert-content-src2" class="alert-content-src">
+				<img src="img/no.png"/>
+				<p>yes yes yes yesyes!</p>
+			</div>
+			<button type="button" id="launchNormalAlert">
+				Launch Normal Alert
+			</button>
+			<button type="button" id="launchAlertButton">
+				Launch Custom Alert
+			</button>
+			<button type="button" id="launchAlert2Button">
+				Launch Custom Alert 2
+			</button>
 		</div>
-		<button type="button" id="launchNormalAlert">
-			Launch Normal Alert
-		</button>
-		<button type="button" id="launchAlertButton">
-			Launch Custom Alert
-		</button>
+		<div class="container" id="confirm-box-container">
+		<button type="button" id="launch-confirm-btn">
+				Launch Confirm Box
+			</button>
+		</div>
 		<script type="text/javascript" src="js/alert.js"></script>
+		<script type="text/javascript" src="js/confirm.js"></script>
 		<script>
 			var myPositiveMsg = "This is a very long positive message!";
 			var myCustomAlert = new Alert({
-				positiveMessage: myPositiveMsg
+				positiveMessage: myPositiveMsg,
+				content: "Test"
 			});
+
+			var myCustomAlert2 = new Alert({
+				positiveMessage: "Ok Alert 2",
+				contentID: "alert-content-src2"
+			})
 
 			var launcher = document.getElementById("launchAlertButton");
 			launcher.addEventListener('click',function(){
 				myCustomAlert.open();
-			})
+			});
+
+			var launcher2 = document.getElementById("launchAlert2Button");
+			launcher2.addEventListener('click',function(){
+				myCustomAlert2.open();
+			});
 
 			var normalLauncher = document.getElementById("launchNormalAlert");
 			normalLauncher.addEventListener('click', function(){
 				alert("Boring old alert message");
+			});
+		</script>
+		<script>
+			var myConfirmBox = new Confirm({
+				positiveMessage: "Sige",
+				negativeMesage: "Ayaw",
+				positiveCallback: function(){
+					var a = new Alert({
+						content: "Positive!"
+					});
+					a.open();
+				},
+				negativeCallback: function(){
+					var a = new Alert({
+						content: "Negative!"
+					});
+					a.open();
+				},
+				content: "Test content"
+			});
+
+			var confirmLauncher = document.getElementById("launch-confirm-btn");
+			confirmLauncher.addEventListener('click', function() {
+				myConfirmBox.open();
 			});
 		</script>
 	</body>
