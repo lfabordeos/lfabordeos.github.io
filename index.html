@@ -6,6 +6,7 @@
 		</title>
 		<link rel="stylesheet" href="css/alert.css"/>
 		<link rel="stylesheet" href="css/confirm.css"/>
+		<link rel="stylesheet" href="css/prompt.css"/>
 	</head>
 	<body>
 		<div class="container" id="alert-box-container">
@@ -32,8 +33,17 @@
 				Launch Confirm Box
 			</button>
 		</div>
+		<div class="container" id="prompt-box-container">
+			<div id="prompt-content-1" class="prompt-content-src">
+				<input type="text" value="" placeholder="Username" id="prompt1-input-1"/><br/>
+				<input type="password" value="" placeholder="Password" id="prompt1-input-2"/><br/>
+			</div>
+			<button type="button" id="launch-prompt-btn">Launch Prompt Button</button>
+		</div>
 		<script type="text/javascript" src="js/alert.js"></script>
 		<script type="text/javascript" src="js/confirm.js"></script>
+		<script type="text/javascript" src="js/prompt.js"></script>
+		<script type="text/javascript" src="js/jQuery/jquery-2.2.3.min.js"></script>
 		<script>
 			var myPositiveMsg = "This is a very long positive message!";
 			var myCustomAlert = new Alert({
@@ -84,6 +94,54 @@
 			confirmLauncher.addEventListener('click', function() {
 				myConfirmBox.open();
 			});
+		</script>
+		<script>
+			var myPromptBox = new Prompt({
+				positiveMessage: "Try",
+				negativeMessage: "Ayaw",
+				cancelCallback: function(){
+					this.close();
+					new Alert({content: "Ay umayaw!"}).open();
+				},
+				contentID: "prompt-content-1",
+				submitCallback: function(){
+					/*
+					//vanilla JS test
+					var username = "testing";
+					var password = "testing";
+					var usernameInput = document.getElementById("prompt1-input-1").value;
+					var passwordInput = document.getElementById("prompt1-input-2").value;
+					if(usernameInput == username && passwordInput == password ) {
+						//positive
+						myPromptBox.close();
+					} else {
+						myPromptBox.shake();
+					}
+					*/
+					//jQuery ajax test
+					var usernameInput = document.getElementById("prompt1-input-1").value;
+					var passwordInput = document.getElementById("prompt1-input-2").value;
+					$.ajax({
+						data: {username:usernameInput,password:passwordInput},
+						dataType: "json",
+						method: "POST",
+						url: "ajax.php",
+						success: function(response) {
+							if(response.return) {
+								myPromptBox.close();
+								new Alert({content:"Tama!"}).open();
+							} else {
+								myPromptBox.shake();
+							}
+						}
+					});
+				}
+			});
+
+			var promptLauncher = document.getElementById("launch-prompt-btn");
+			promptLauncher.addEventListener('click', function(){
+				myPromptBox.open();
+			})
 		</script>
 	</body>
 </html>
