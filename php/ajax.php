@@ -1,4 +1,5 @@
 <?php
+	print_r($_POST);
 	if($_POST['username'] == "testing" && $_POST['password'] == "testing"){
 		$return = true;
 	} else {
