@@ -104,37 +104,37 @@
 					new Alert({content: "Ay umayaw!"}).open();
 				},
 				contentID: "prompt-content-1",
-				submitCallback: function(){
-				/*	
-				//vanilla JS test
-				var username = "testing";
-				var password = "testing";
-				var usernameInput = document.getElementById("prompt1-input-1").value;
-				var passwordInput = document.getElementById("prompt1-input-2").value;
-				if(usernameInput == username && passwordInput == password ) {
-					//positive
-					myPromptBox.close();
-				} else {
-					myPromptBox.shake();
-				}
-				*/
-				//jQuery ajax test
-				var usernameInput = document.getElementById("prompt1-input-1").value;
-				var passwordInput = document.getElementById("prompt1-input-2").value;
-				$.ajax({
-					data: {username:usernameInput,password:passwordInput},
-					dataType: "json",
-					method: "POST",
-					url: "./ajax.php",
-					success: function(response) {
-						if(response.return) {
-							myPromptBox.close();
-							new Alert({content:"Tama!"}).open();
-						} else {
-							myPromptBox.shake();
-						}
+				submitCallback: function(){	
+					//vanilla JS test
+					var username = "testing";
+					var password = "testing";
+					var usernameInput = document.getElementById("prompt1-input-1").value;
+					var passwordInput = document.getElementById("prompt1-input-2").value;
+					if(usernameInput == username && passwordInput == password ) {
+						//positive
+						myPromptBox.close();
+					} else {
+						myPromptBox.shake();
 					}
-				});
+					/*
+					//jQuery ajax test
+					var usernameInput = document.getElementById("prompt1-input-1").value;
+					var passwordInput = document.getElementById("prompt1-input-2").value;
+					$.ajax({
+						data: {username:usernameInput,password:passwordInput},
+						dataType: "json",
+						method: "POST",
+						url: "./ajax.php",
+						success: function(response) {
+							if(response.return) {
+								myPromptBox.close();
+								new Alert({content:"Tama!"}).open();
+							} else {
+								myPromptBox.shake();
+							}
+						}
+					});
+					*/
 				}
 			});
 
