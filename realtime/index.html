@@ -99,7 +99,7 @@
           realtimeUtils.load(id.replace('/', ''), onFileLoaded, onFileInitialize);
         } else {
           // Create a new document, add it to the URL
-          realtimeUtils.createRealtimeFile('New Quickstart File', function(createResponse) {
+          realtimeUtils.createRealtimeFile('RealtimeGitTest', function(createResponse) {
             window.history.pushState(null, null, '?id=' + createResponse.id);
             realtimeUtils.load(createResponse.id, onFileLoaded, onFileInitialize);
           });
@@ -145,9 +145,6 @@
 
         //bind update event on answers
         collabForm.answers.addEventListener(gapi.drive.realtime.EventType.VALUE_CHANGED,updateInput);
-
-        //spoof some onchange events
-        setTimeout(changeVal(1,"random string"),2000);
       }
 
       function setInputValues(collabForm) {
@@ -160,10 +157,6 @@
 
       function updateInput(form){
         $("input[name="+form.property+"]").val(form.newValue);
-      }
-
-      function changeVal(x,text) {
-        $("input[name=question_"+x+"]").val(text);
       }
     </script>
   </body>
