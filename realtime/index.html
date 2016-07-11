@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Google Realtime Quickstart</title>
+
+    <!-- Load Styles -->
+    <link href="https://www.gstatic.com/realtime/quickstart-styles.css" rel="stylesheet" type="text/css"/>
+
+    <!-- Load the Realtime JavaScript library -->
+    <script src="https://apis.google.com/js/api.js"></script>
+
+    <!-- Load the utility library -->
+    <script src="https://www.gstatic.com/realtime/realtime-client-utils.js"></script>
+
+    <script   src="https://code.jquery.com/jquery-2.2.4.min.js"   integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="   crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <main>
+      <h1>Realtime Collaboration Quickstart</h1>
+      <p>Now that your application is running, simply type in either text box and see your changes instantly appear in the other one. Open
+      this same document in a <a onclick="window.open(window.location.href);return false;" target="_blank">new tab</a> to see it work across tabs.</p>
+
+      <!--FORM-->
+      <form action="" method="POST">
+        <div>
+            <label for="question_1">Question 1</label>
+            <input type="text" id="question_1" name="question_1" value="" placeholder="Answer 1" class="questions"/>
+        </div><br/>
+        <div>
+            <label for="question_2">Question 2</label>
+            <input type="text" id="question_2" name="question_2" value="" placeholder="Answer 2" class="questions"/>
+        </div><br/>
+        <div>
+            <label for="question_3">Question 3</label>
+            <input type="text" id="question_3" name="question_3" value="" placeholder="Answer 3" class="questions"/>
+        </div>
+      </form>
+      <button id="auth_button">Authorize</button>
+    </main>
+    <script>
+      var clientId = '697444159326-94erljv4l4qr1pqqc3l94k70d4trfna4.apps.googleusercontent.com';
+
+      if (!/^([0-9])$/.test(clientId[0])) {
+        alert('Invalid Client ID - did you forget to insert your application Client ID?');
+      }
+      // Create a new instance of the realtime utility with your client ID.
+      var realtimeUtils = new utils.RealtimeUtils({ clientId: clientId });
+
+      authorize();
+
+      function authorize() {
+        // Attempt to authorize
+        realtimeUtils.authorize(function(response){
+          if(response.error){
+            // Authorization failed because this is the first time the user has used your application,
+            // show the authorize button to prompt them to authorize manually.
+            var button = document.getElementById('auth_button');
+            button.classList.add('visible');
+            button.addEventListener('click', function () {
+              realtimeUtils.authorize(function(response){
+                start();
+              }, true);
+            });
+          } else {
+              start();
+          }
+        }, false);
+      }
+
+      function start() {
+        //create the custom object
+        Form = function(){};
+        gapi.drive.realtime.custom.registerType(Form, 'Form');
+
+        //create fields
+        Form.prototype.questions = gapi.drive.realtime.custom.collaborativeField("questions");
+        Form.prototype.answers = gapi.drive.realtime.custom.collaborativeField("answers");
+
+        //create methods
+        Form.prototype.addAnswer = function(index,value) {
+          this.answers.set(index,value);
+        }
+
+        Form.prototype.getAnswer = function(index) {
+          return this.answers.get(index);
+        }
+
+        //set initializer
+        gapi.drive.realtime.custom.setInitializer(Form, doCustomInit);
+
+        //set onLoad
+        gapi.drive.realtime.custom.setOnLoaded(Form, doCustomOnLoaded);
+
+        // With auth taken care of, load a file, or create one if there
+        // is not an id in the URL.
+        var id = realtimeUtils.getParam('id');
+        if (id) {
+          // Load the document id from the URL
+          realtimeUtils.load(id.replace('/', ''), onFileLoaded, onFileInitialize);
+        } else {
+          // Create a new document, add it to the URL
+          realtimeUtils.createRealtimeFile('New Quickstart File', function(createResponse) {
+            window.history.pushState(null, null, '?id=' + createResponse.id);
+            realtimeUtils.load(createResponse.id, onFileLoaded, onFileInitialize);
+          });
+        }
+      }
+
+      function doCustomInit() {
+        var model = gapi.drive.realtime.custom.getModel(this);
+        this.answers = model.createMap();
+      }
+
+      function doCustomOnLoaded() {
+        console.log("object loaded");
+        //this.addEventListener(gapi.drive.realtime.EventType.OBJECT_CHANGED,logReviewChange(this));
+      }
+
+      function logReviewChange(object) {
+        console.log(object);
+      }
+
+      // The first time a file is opened, it must be initialized with the
+      // document structure. This function will add a collaborative string
+      // to our model at the root.
+      function onFileInitialize(model) {
+        var form = model.create("Form");
+        model.getRoot().set("form",form);
+      }
+
+      // After a file has been initialized and loaded, we can access the
+      // document. We will wire up the data model to the UI.
+      function onFileLoaded(doc) {
+        var collabForm = doc.getModel().getRoot().get("form");
+        setInputValues(collabForm);
+
+        //bind onchange events here
+        $(".questions").each(function(){
+          var _this = this;
+          $(_this).change(function(){
+            console.log("input on change event triggered");
+            collabForm.addAnswer($(this).attr("name"),$(this).val());
+          });
+        });
+
+        //bind update event on answers
+        collabForm.answers.addEventListener(gapi.drive.realtime.EventType.VALUE_CHANGED,updateInput);
+
+        //spoof some onchange events
+        setTimeout(changeVal(1,"random string"),2000);
+      }
+
+      function setInputValues(collabForm) {
+        //load saved values from answers
+        var keys = collabForm.answers.keys();
+        keys.forEach(function(item,index){
+          $("input[name="+item+"]").val(collabForm.answers.get(item));
+        });
+      }
+
+      function updateInput(form){
+        $("input[name="+form.property+"]").val(form.newValue);
+      }
+
+      function changeVal(x,text) {
+        $("input[name=question_"+x+"]").val(text);
+      }
+    </script>
+  </body>
+</html>
